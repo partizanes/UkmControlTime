@@ -24,7 +24,7 @@ namespace UkmControlTime
 
         private static void prg()
         {
-            if (!IsTimeStart())
+            if (IsTimeStart())
             {
                 if (CheckLocalTime())
                 {
@@ -186,7 +186,11 @@ namespace UkmControlTime
         {
             List<string> IPs = new List<string>();
             
-            IPs.Add("192.168.1.160");
+            IPs.Add("192.168.1.156");
+            IPs.Add("192.168.1.157");
+            IPs.Add("192.168.1.158");
+            IPs.Add("192.168.1.159");
+            IPs.Add("192.168.1.159");
 
             Ping Pinger = new Ping();
             
@@ -195,47 +199,38 @@ namespace UkmControlTime
                 try
                 {
                     PingReply Reply = Pinger.Send(ip);
+
                     Color.WriteLineColor("Ip: " + ip + " Статус: " + Reply.Status.ToString(),ConsoleColor.Green);
 
                     if (Reply.Status == IPStatus.Success)
                     {
-                        System.Diagnostics.Process.Start(Environment.CurrentDirectory + "\\script\\host.bat " + ip);
-                    }
-                    try
-                    {
                         System.Diagnostics.Process p = new System.Diagnostics.Process();
-                        p.StartInfo.FileName = Environment.CurrentDirectory + "\\Script\\host.cmd";
+                        p.StartInfo.FileName = (Environment.CurrentDirectory + "\\Script\\host.cmd");
                         p.StartInfo.Arguments = ip;
                         p.Start();
-                    }
-                    catch (System.Exception ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                    }
 
-                    bool status = true;
+                        bool status = true;
 
-                    while (status)
-                    {
-                        Thread.Sleep(1000);
-
-                        if (File.Exists(Environment.CurrentDirectory + "\\script\\error.flg"))
+                        while (status)
                         {
-                            Color.WriteLineColor("Установить время на терминале "+ ip +" не удалось !", ConsoleColor.Red);
-                            File.Delete(Environment.CurrentDirectory + "\\script\\error.flg");
-                            status = false;
-                        }
+                            Thread.Sleep(1000);
 
-                        if (File.Exists(Environment.CurrentDirectory + "\\script\\success.flg"))
-                        {
-                            Color.WriteLineColor("Операция завершена успешно!", ConsoleColor.Green);
-                            File.Delete(Environment.CurrentDirectory + "\\script\\success.flg");
-                            status = false;
+                            if (File.Exists(Environment.CurrentDirectory + "\\script\\error.flg"))
+                            {
+                                Color.WriteLineColor("Установить время на терминале " + ip + " не удалось !", ConsoleColor.Red);
+                                File.Delete(Environment.CurrentDirectory + "\\script\\error.flg");
+                                status = false;
+                            }
+
+                            if (File.Exists(Environment.CurrentDirectory + "\\script\\success.flg"))
+                            {
+                                Color.WriteLineColor("Операция завершена успешно!", ConsoleColor.Green);
+                                File.Delete(Environment.CurrentDirectory + "\\script\\success.flg");
+                                status = false;
+                            }
                         }
                     }
-
                     Color.WriteLineColor("Перехожу к следующей операции", ConsoleColor.Cyan);
-
                 }
                 catch (System.Exception ex)
                 {
