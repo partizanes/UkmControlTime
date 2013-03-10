@@ -31,7 +31,10 @@ namespace UkmControlTime
                     StartCheck();
                 }
                 else
+                {
                     ChangeTime(GetNTPTime());
+                    prg();
+                }
             }
 
             CheckTimeToStart();
@@ -41,18 +44,28 @@ namespace UkmControlTime
         static void ChangeTime(DateTime time)
         {
             System.Diagnostics.Process timeChanger = System.Diagnostics.Process.Start("cmd.exe", "/c time" + time);
+            Color.WriteLineColor("Устанавливаю новое время: " + time, ConsoleColor.Red);
+            Thread.Sleep(1000);
         }
 
         private static bool IsTimeStart()
         {
             if (DateTime.Now.TimeOfDay.IsBetween(new TimeSpan(7, 0, 0), new TimeSpan(8, 0, 0)))
+            {
+                Color.WriteLineColor("Рабочее время программы!", ConsoleColor.Green);
                 return true;
+            }
             else
+            {
+                Color.WriteLineColor("Нерабочее время программы!", ConsoleColor.Red);
                 return false;
+            }
         }
 
         public static void CheckTimeToStart()
         {
+            Color.WriteLineColor("Проверка времени до следующего запуска..", ConsoleColor.Green);
+
             TimeSpan diff = new TimeSpan();
 
             DateTime TimeNow = DateTime.Now;
@@ -211,6 +224,8 @@ namespace UkmControlTime
 
                         bool status = true;
 
+                        DateTime TimeOperationStart = DateTime.Now;
+
                         while (status)
                         {
                             Thread.Sleep(1000);
@@ -218,19 +233,33 @@ namespace UkmControlTime
                             if (File.Exists(Environment.CurrentDirectory + "\\script\\error.flg"))
                             {
                                 Color.WriteLineColor("Установить время на терминале " + ip + " не удалось !", ConsoleColor.Red);
+                                Log.log_write("Установить время на терминале " + ip + " не удалось !", "INFO", "UkmControlTime");
                                 File.Delete(Environment.CurrentDirectory + "\\script\\error.flg");
                                 status = false;
                             }
 
                             if (File.Exists(Environment.CurrentDirectory + "\\script\\success.flg"))
                             {
-                                Color.WriteLineColor("Операция завершена успешно!", ConsoleColor.Green);
+                                Color.WriteLineColor("Операция завершена успешно!Терминал: " + ip, ConsoleColor.Green);
+                                Log.log_write("Операция завершена успешно!", "INFO", "UkmControlTime");
                                 File.Delete(Environment.CurrentDirectory + "\\script\\success.flg");
+                                status = false;
+                            }
+
+                            DateTime TimeOperationCheck = DateTime.Now;
+
+                            if ((TimeOperationCheck - TimeOperationStart).Minutes > 3)
+                            {
+                                Color.WriteLineColor("В течении 3 минут флаг статуса операции не создан: " + ip, ConsoleColor.Green);
                                 status = false;
                             }
                         }
                     }
-                    Color.WriteLineColor("Перехожу к следующей операции", ConsoleColor.Cyan);
+                    else
+                    {
+                        Color.WriteLineColor("Перехожу к следующей операции", ConsoleColor.Cyan);
+                        Log.log_write("Перехожу к следующей операции", "INFO", "UkmControlTime");
+                    }
                 }
                 catch (System.Exception ex)
                 {
