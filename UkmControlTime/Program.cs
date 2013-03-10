@@ -36,9 +36,7 @@ namespace UkmControlTime
                     prg();
                 }
             }
-
             CheckTimeToStart();
-
         }
 
         static void ChangeTime(DateTime time)
