@@ -48,7 +48,7 @@ namespace UkmControlTime
 
         private static bool IsTimeStart()
         {
-            if (DateTime.Now.TimeOfDay.IsBetween(new TimeSpan(7, 0, 0), new TimeSpan(8, 0, 0)))
+            if (DateTime.Now.TimeOfDay.IsBetween(new TimeSpan(7, 40, 0), new TimeSpan(8, 0, 0)))
             {
                 Color.WriteLineColor("Рабочее время программы!", ConsoleColor.Green);
                 return true;
@@ -67,11 +67,13 @@ namespace UkmControlTime
             TimeSpan diff = new TimeSpan();
 
             DateTime TimeNow = DateTime.Now;
-            DateTime TimeEnd = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 07, 00, 01);
+            DateTime TimeEnd = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 07, 40, 01);
+            Console.WriteLine(TimeNow);
 
-            if (TimeNow.Hour > 7 && TimeNow.Hour < 24)
+            if (TimeNow.Hour >= 7)
             {
                 TimeEnd = TimeEnd.AddDays(1);
+                Console.WriteLine(TimeEnd);
             }
 
             diff = TimeEnd - TimeNow;
@@ -196,12 +198,18 @@ namespace UkmControlTime
         private static void StartCheck()
         {
             List<string> IPs = new List<string>();
-            
+
+            IPs.Add("192.168.1.150");
+            IPs.Add("192.168.1.151");
+            IPs.Add("192.168.1.152");
+            IPs.Add("192.168.1.153");
+            IPs.Add("192.168.1.154");
+            IPs.Add("192.168.1.155");
             IPs.Add("192.168.1.156");
             IPs.Add("192.168.1.157");
             IPs.Add("192.168.1.158");
             IPs.Add("192.168.1.159");
-            IPs.Add("192.168.1.159");
+            IPs.Add("192.168.1.161");
 
             Ping Pinger = new Ping();
             
@@ -251,6 +259,8 @@ namespace UkmControlTime
                                 Color.WriteLineColor("В течении 3 минут флаг статуса операции не создан: " + ip, ConsoleColor.Green);
                                 status = false;
                             }
+
+                            Color.WriteLineColor("Время Выполнения: " + (TimeOperationCheck - TimeOperationStart).Minutes.ToString(),ConsoleColor.Yellow);
                         }
                     }
                     else
