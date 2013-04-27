@@ -138,9 +138,9 @@ namespace UkmControlTime
             else
                 Color.WriteLineColor("Часы спешат на : " + (local - ntp), ConsoleColor.Yellow);
 
-            if ((ntp - local).TotalSeconds > 60)
+            if ((ntp - local).TotalSeconds > 300)
             {
-                Color.WriteLineColor("Разница больше 60 секунд!", ConsoleColor.Red);
+                Color.WriteLineColor("Разница больше 300 секунд!", ConsoleColor.Red);
                 return false;
             }
             else
