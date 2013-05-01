@@ -82,13 +82,13 @@ namespace UkmControlTime
             {
                 Console.WriteLine("\n");
                 Color.WriteLineColor("Запускаю поток контролера", ConsoleColor.Green);
-                WaitTime(diff);
+                WaitTime(diff,TimeEnd);
             });
             thd.Name = "Поток контролера";
             thd.Start();
         }
 
-        static void WaitTime(TimeSpan diff)
+        static void WaitTime(TimeSpan diff,DateTime TimeEnd)
         {
             int i = Convert.ToInt32(diff.TotalSeconds);
             string text;
@@ -102,25 +102,9 @@ namespace UkmControlTime
 
             while (i != 0)
             {
-                int hour = i / 3600;
-                int minute = (i / 60) - (hour * 60);
-                int second = i - (minute * 60) - (hour * 3600);
-                string n = "";
-                string m = "";
-
-
-                if (second < 10)
-                    n = "0";
-
-                if (minute < 10)
-                    m = "0";
-
-                Code.RenderConsoleProgress(0, '\u2592', cl, text + hour + ":" + m + minute + ":" + n + second);
+                Code.RenderConsoleProgress(0, '\u2592', cl, text + (TimeEnd - DateTime.Now).ToString(@"dd\.hh\:mm\:ss"));
                 Thread.Sleep(1000);
                 i--;
-
-                n = "";
-                m = "";
             }
 
             prg();
